@@ -1,3 +1,5 @@
+org: alexlapinski
+app: lambda-pushover
 service: lambda-pushover
 
 provider:
