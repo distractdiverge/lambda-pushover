@@ -8,19 +8,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+
       - name: Cache node modules
         uses: actions/cache@master
         with: 
-          path: node_modules
+          path: ./node_modules/
           key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-build-${{ env.cache-name }}-
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
+      
       - name: Setup NodeJS
         uses: actions/setup-node@master
         with:
           node-version: '10.x'
+      
       - name: Install Dependencies
         run: npm install
     
