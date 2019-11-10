@@ -1,6 +1,12 @@
+const R = require('ramda');
 const settings = require('./services/settings');
 const scheduler = require('./services/aws.scheduler');
 const pushover = require('./services/pushover');
+
+const messageOrUnknown = R.pipe(
+  R.prop('message'),
+  R.defaultTo('Unknown'),
+);
 
 module.exports.execute = async event => {
   const env = settings.getEnv();
@@ -14,33 +20,36 @@ module.exports.execute = async event => {
     title: 'well this is from a lambda',
     sound: 'magic',
     device: 'all',
-    priority: 1,
+    priority: 0,
   };
 
-  let result;
+  let pushoverResult;
 
   try {
-    result = await pushover.sendMessage(
+    pushoverResult = await pushover.sendMessage(
       pushoverConfig.appToken,
       pushoverConfig.userToken,
       msg,
     );
-  } catch(err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        message: err.message,
-      })
-    };
-  }
-
-  try {
-    await scheduler.schedule(scheduler.randMinutesInFuture());
   } catch(error) {
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: err.message,
+        message: 'Error sending a message to Pushover',
+        errorMessage: messageOrUnknown(error),
+      })
+    };
+  }
+
+  let scheduleResult;
+  try {
+    scheduleResult = await scheduler.schedule(scheduler.randMinutesInFuture());
+  } catch(error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'Error Scheduling the CloudWatch Event',
+        errorMessage: messageOrUnknown(error),
       })
     };
   }
@@ -48,6 +57,7 @@ module.exports.execute = async event => {
   const response = {
     message: 'Success, message sent and event scheduled',
     pushoverResult: result,
+    scheduleResult: scheduleResult,
   };
   
   return {

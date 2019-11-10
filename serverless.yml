@@ -5,12 +5,14 @@ provider:
   runtime: nodejs10.x
   environment:
     NODE_ENV: production
-    PUSHOVER_USER: <set>
-    PUSHOVER_TOKEN: <set>
 
 functions:
   main:
     handler: handler.execute
+    memorySize: 128
+    environment:
+      PUSHOVER_USER: <set>
+      PUSHOVER_TOKEN: <set>
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
