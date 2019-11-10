@@ -6,7 +6,7 @@ const getClient = (appToken, userToken) => new Push({
 });
 
 const sendMessageAsync = (pushClient, message) => new Promise((resolve, reject) => 
-    pushClient.send(msg, (err, data) => err ? reject(err) : resolve(data))
+    pushClient.send(message, (err, data) => err ? reject(err) : resolve(data))
 );
 
 const sendMessage = (appToken, userToken, message) =>

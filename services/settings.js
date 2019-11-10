@@ -7,10 +7,10 @@ if (process.env.NODE_ENV !== 'production') {
 
 const getEnvVar = name => R.path(['env', name], process);
 
-const getEnvVarOrDefault = (name, defaultValue) => R.pipe(
-    getEnvVar,
-    R.defaultTo(defaultValue)
-)(name);
+const getEnvVarOrDefault = (name, defaultValue) => {
+    const value = getEnvVar(name);
+    return R.defaultTo(defaultValue)(value);
+};
 
 const getEnvVarOrError = (name) => {
     const value = getEnvVar(name);
@@ -21,7 +21,7 @@ const getEnvVarOrError = (name) => {
 };
 
 module.exports = {
-    getEnv: getEnvVarOrDefault('NODE_ENV', 'development'),
+    getEnv: () => getEnvVarOrDefault('NODE_ENV', 'development'),
     getPushoverConfig: () => ({
         appToken: getEnvVarOrError('PUSHOVER_TOKEN'),
         userToken: getEnvVarOrError('PUSHOVER_USER'),

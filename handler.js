@@ -3,7 +3,11 @@ const scheduler = require('./services/aws.scheduler');
 const pushover = require('./services/pushover');
 
 module.exports.execute = async event => {
+  const env = settings.getEnv();
   const pushoverConfig = settings.getPushoverConfig();
+  console.log(`Env: ${env}`);
+  console.log(`AppToken: ${pushoverConfig.appToken}`);
+  console.log(`UserToken: ${pushoverConfig.userToken}`);
 
   const msg = {
     message: 'omg node test',
